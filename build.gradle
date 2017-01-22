@@ -1,0 +1,69 @@
+plugins {
+    id 'groovy'
+    id 'maven'
+    id 'maven-publish'
+    id 'com.jfrog.bintray' version '1.7.3'
+}
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+group GROUP
+version VERSION_NAME
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+
+    compile 'com.android.tools.build:gradle:2.2.3'
+    compile 'com.google.apis:google-api-services-androidpublisher:v2-rev40-1.22.0'
+    compile 'com.google.api-client:google-api-client-java6:1.22.0'
+    compile 'com.google.oauth-client:google-oauth-client-jetty:1.22.0'
+
+    testCompile 'junit:junit:4.12'
+}
+
+// upload bintray
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            groupId GROUP
+            artifactId ARTIFACT_ID
+            version VERSION_NAME
+            artifact sourcesJar
+            artifact javadocJar
+        }
+    }
+}
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    publications = ['maven']
+    pkg {
+        repo = 'maven'
+        name = ARTIFACT_ID
+        licenses = ['MIT']
+        vcsUrl = 'https://github.com/STAR-ZERO/gradle-play-uploader.git'
+    }
+}
+
+// for debug
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: uri('../repo'))
+        }
+    }
+}

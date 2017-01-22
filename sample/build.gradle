@@ -1,0 +1,27 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath 'com.star_zero:gradle-play-uploader:1.0.0'
+    }
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'com.star-zero.gradle-play-uploader'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        applicationId "com.star_zero.example.gradle_play_uploader"
+    }
+}
+
+play {
+    credentialJson = 'credential.json'
+    apk = 'app/build/outputs/apk/app-release.apk'
+    track = 'beta'
+    mapping = 'app/build/outputs/mapping/release/mapping.txt'
+}
